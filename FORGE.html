@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>FORGE</title>
+<style>
+  /* ═══════════════════════════════════════════
+     FORGE — Apple Liquid Glass UI
+     Optimised for iPhone Safari / Portrait
+  ═══════════════════════════════════════════ */
+
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --sys-bg:          #000000;
+    --sys-bg-2:        #0a0a0a;
+    --sys-elevated:    rgba(28,28,30,0.85);
+    --sys-grouped:     rgba(44,44,46,0.70);
+    --glass-bg:        rgba(255,255,255,0.07);
+    --glass-bg-2:      rgba(255,255,255,0.04);
+    --glass-border:    rgba(255,255,255,0.14);
+    --glass-border-2:  rgba(255,255,255,0.07);
+    --glass-blur:      28px;
+    --glass-sat:       2.0;
+    --accent:          #2997FF;
+    --accent-2:        #30D158;
+    --accent-3:        #FF9F0A;
+    --accent-4:        #BF5AF2;
+    --label:           rgba(255,255,255,0.96);
+    --label-2:         rgba(255,255,255,0.60);
+    --label-3:         rgba(255,255,255,0.36);
+    --label-4:         rgba(255,255,255,0.16);
+    --sep:             rgba(255,255,255,0.10);
+    --r-xs:            8px;
+    --r-sm:            12px;
+    --r-md:            16px;
+    --r-lg:            22px;
+    --r-xl:            28px;
+    --r-capsule:       9999px;
+    --safe-top:        env(safe-area-inset-top, 48px);
+    --safe-bot:        env(safe-area-inset-bottom, 20px);
+    --font-sans:       'DM Sans', -apple-system, 'SF Pro Text', system-ui, sans-serif;
+    --font-display:    'DM Serif Display', 'New York', Georgia, serif;
+    --dur-fast:        160ms;
+    --dur-base:        300ms;
+    --dur-slow:        500ms;
+    --ease-spring:     cubic-bezier(0.34,1.56,0.64,1);
+    --ease-out:        cubic-bezier(0.16,1,0.3,1);
+  }
+
+  *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+
+  ::selection { background:rgba(41,151,255,0.30); }
+
+  html {
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+    overscroll-behavior: none;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background:  var(--sys-bg);
+    color:       var(--label);
+    min-height:  100dvh;
+    overflow-x:  hidden;
+    position:    relative;
+  }
+
+  /* ── Ambient background glow ── */
+  body::before {
+    content:  '';
+    position: fixed;
+    inset:    0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% -10%,  rgba(41,151,255,0.18) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 50% at 90%  30%,  rgba(191,90,242,0.12) 0%, transparent 50%),
+      radial-gradient(ellipse 70% 60% at 10%  80%,  rgba(48,209,88,0.10)  0%, transparent 55%),
+      radial-gradient(ellipse 90% 70% at 50% 110%,  rgba(41,151,255,0.12) 0%, transparent 50%);
+    z-index: 0;
+  }
+
+  body::after {
+    content:  '';
+    position: fixed;
+    inset:    0;
+    pointer-events: none;
+    background-image:
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+    opacity: 0.018;
+    z-index: 0;
+  }
+
+  /* ════════════════════════════════════════
+     STICKY HEADER — Liquid Glass
+  ════════════════════════════════════════ */
+
+  #app-header {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    padding: calc(var(--safe-top) + 4px) 20px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    background:   rgba(0,0,0,0.52);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+            backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.04),
+                0 8px 32px rgba(0,0,0,0.5);
+  }
+
+  /* scroll-progress pill */
+  #app-header::before {
+    content:  '';
+    position: absolute;
+    bottom:   0;
+    left:     0;
+    height:   1.5px;
+    width:    calc(var(--progress,0) * 100%);
+    background: linear-gradient(90deg, var(--accent), var(--accent-4));
+    transition: width 60ms linear;
+  }
+
+  /* FORGE wordmark */
+  .forge-wordmark {
+    display:     flex;
+    align-items: baseline;
+    gap:         3px;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .forge-wordmark .f-letter {
+    font-family: var(--font-display);
+    font-size:   38px;
+    font-style:  italic;
+    background:  linear-gradient(135deg, #fff 0%, rgba(41,151,255,0.9) 60%, rgba(191,90,242,0.8) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 18px rgba(41,151,255,0.5));
+  }
+
+  .forge-wordmark .f-rest {
+    font-family:    var(--font-sans);
+    font-size:      26px;
+    font-weight:    700;
+    color:          var(--label);
+    letter-spacing: -0.06em;
+  }
+
+  .forge-sub {
+    font-size:      11px;
+    font-weight:    500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color:          var(--label-3);
+    margin-top:     -10px;
+  }
+
+  /* ── RUN FORGE button ── */
+  #run-btn {
+    position:    relative;
+    display:     inline-flex;
+    align-items: center;
+    gap:         8px;
+    padding:     13px 28px;
+    font-family: var(--font-sans);
+    font-size:   15px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color:       var(--label);
+    background:  rgba(41,151,255,0.18);
+    -webkit-backdrop-filter: blur(20px) saturate(2);
+            backdrop-filter: blur(20px) saturate(2);
+    border:      1px solid rgba(41,151,255,0.40);
+    border-radius: var(--r-capsule);
+    cursor:      pointer;
+    overflow:    hidden;
+    transition:
+      transform    var(--dur-fast) var(--ease-spring),
+      box-shadow   var(--dur-base) var(--ease-out),
+      background   var(--dur-base) var(--ease-out),
+      border-color var(--dur-base) var(--ease-out);
+    box-shadow:
+      0 2px 16px rgba(41,151,255,0.20),
+      inset 0 1px 0 rgba(255,255,255,0.16),
+      inset 0 -1px 0 rgba(0,0,0,0.10);
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    width: 100%;
+    justify-content: center;
+  }
+
+  #run-btn::before {
+    content:  '';
+    position: absolute;
+    inset:    0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 100%);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  /* specular edge highlight */
+  #run-btn::after {
+    content:  '';
+    position: absolute;
+    top: 0; left: 12px; right: 12px; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    border-radius: 0 0 var(--r-capsule) var(--r-capsule);
+  }
+
+  #run-btn:active {
+    transform:  scale(0.97);
+    box-shadow: 0 1px 6px rgba(41,151,255,0.15),
+                inset 0 1px 0 rgba(255,255,255,0.10);
+  }
+
+  #run-btn.running {
+    background:  rgba(255,159,10,0.18);
+    border-color: rgba(255,159,10,0.40);
+    box-shadow: 0 2px 16px rgba(255,159,10,0.20),
+                inset 0 1px 0 rgba(255,255,255,0.12);
+    pointer-events: none;
+  }
+
+  #run-btn.done {
+    background:  rgba(48,209,88,0.16);
+    border-color: rgba(48,209,88,0.38);
+    box-shadow: 0 2px 16px rgba(48,209,88,0.20),
+                inset 0 1px 0 rgba(255,255,255,0.12);
+  }
+
+  .btn-icon {
+    width: 18px; height: 18px;
+    flex-shrink: 0;
+  }
+
+  .btn-icon svg { width:100%; height:100%; }
+
+  /* spinning ring for loading */
+  .spinner {
+    width:  18px; height: 18px;
+    border: 2px solid rgba(255,159,10,0.30);
+    border-top-color: #FF9F0A;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Query input row ── */
+  #query-row {
+    display: flex;
+    width:   100%;
+    gap:     8px;
+    align-items: center;
+  }
+
+  #forge-input {
+    flex:        1;
+    background:  var(--glass-bg);
+    border:      1px solid var(--glass-border-2);
+    border-radius: var(--r-capsule);
+    padding:     10px 16px;
+    font-family: var(--font-sans);
+    font-size:   14px;
+    color:       var(--label);
+    outline:     none;
+    -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+    transition: border-color var(--dur-fast) ease;
+    min-width: 0;
+  }
+  #forge-input::placeholder { color: var(--label-3); }
+  #forge-input:focus        { border-color: rgba(41,151,255,0.50); }
+
+  /* ════════════════════════════════════════
+     MAIN SCROLL AREA
+  ════════════════════════════════════════ */
+
+  #scroll-area {
+    position:   relative;
+    z-index:    1;
+    padding:    20px 16px calc(var(--safe-bot) + 40px);
+    display:    flex;
+    flex-direction: column;
+    gap:        14px;
+  }
+
+  /* ── Idle / empty state ── */
+  #idle-state {
+    display:        flex;
+    flex-direction: column;
+    align-items:    center;
+    text-align:     center;
+    padding:        60px 24px 40px;
+    gap:            20px;
+    transition:     opacity var(--dur-base) ease,
+                    transform var(--dur-base) var(--ease-out);
+  }
+
+  #idle-state.hidden {
+    opacity:   0;
+    transform: translateY(-12px);
+    pointer-events: none;
+    position:  absolute;
+    inset:     0;
+  }
+
+  .idle-orb {
+    width:  80px; height: 80px;
+    border-radius: 50%;
+    background: conic-gradient(from 180deg, rgba(41,151,255,0.6), rgba(191,90,242,0.6), rgba(48,209,88,0.5), rgba(41,151,255,0.6));
+    -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+    position: relative;
+    animation: orb-pulse 4s ease-in-out infinite;
+    box-shadow: 0 0 40px rgba(41,151,255,0.3),
+                0 0 80px rgba(191,90,242,0.15);
+  }
+
+  .idle-orb::after {
+    content:  '';
+    position: absolute;
+    inset:    3px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.25), rgba(0,0,0,0.6));
+  }
+
+  @keyframes orb-pulse {
+    0%,100% { transform: scale(1);    box-shadow: 0 0 40px rgba(41,151,255,0.30), 0 0 80px rgba(191,90,242,0.15); }
+    50%      { transform: scale(1.06); box-shadow: 0 0 60px rgba(41,151,255,0.45), 0 0 120px rgba(191,90,242,0.25); }
+  }
+
+  .idle-headline {
+    font-family: var(--font-display);
+    font-size:   28px;
+    font-style:  italic;
+    color:       var(--label);
+    line-height: 1.15;
+    text-wrap:   balance;
+  }
+
+  .idle-sub {
+    font-size:   14px;
+    color:       var(--label-3);
+    line-height: 1.55;
+    max-width:   280px;
+  }
+
+  .idle-chips {
+    display:     flex;
+    flex-wrap:   wrap;
+    gap:         8px;
+    justify-content: center;
+  }
+
+  .idle-chip {
+    padding:       6px 14px;
+    background:    var(--glass-bg);
+    border:        1px solid var(--glass-border-2);
+    border-radius: var(--r-capsule);
+    font-size:     12px;
+    color:         var(--label-2);
+    cursor:        pointer;
+    -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+    transition: background var(--dur-fast), color var(--dur-fast);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .idle-chip:active { background: rgba(255,255,255,0.14); color: var(--label); }
+
+  /* ── Output dashboard ── */
+  #output-area {
+    display:        flex;
+    flex-direction: column;
+    gap:            14px;
+    opacity:        0;
+    transform:      translateY(20px);
+    transition:     opacity var(--dur-slow) var(--ease-out),
+                    transform var(--dur-slow) var(--ease-out);
+  }
+
+  #output-area.visible {
+    opacity:   1;
+    transform: translateY(0);
+  }
+
+  /* ── Output header card ── */
+  .out-header-card {
+    background:    rgba(20,20,24,0.70);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+            backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+    border:        1px solid var(--glass-border);
+    border-radius: var(--r-xl);
+    padding:       22px 20px 18px;
+    position:      relative;
+    overflow:      hidden;
+    box-shadow:    0 4px 32px rgba(0,0,0,0.4),
+                   inset 0 1px 0 rgba(255,255,255,0.10);
+  }
+
+  .out-header-card::before {
+    content:  '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.20), transparent);
+  }
+
+  .out-meta {
+    display:     flex;
+    align-items: center;
+    gap:         8px;
+    margin-bottom: 10px;
+  }
+
+  .out-badge {
+    padding:       3px 10px;
+    background:    rgba(41,151,255,0.20);
+    border:        1px solid rgba(41,151,255,0.38);
+    border-radius: var(--r-capsule);
+    font-size:     10px;
+    font-weight:   700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color:         var(--accent);
+  }
+
+  .out-ts {
+    font-size:  11px;
+    color:      var(--label-3);
+  }
+
+  .out-title {
+    font-family:    var(--font-display);
+    font-size:      24px;
+    font-style:     italic;
+    line-height:    1.2;
+    letter-spacing: -0.02em;
+    color:          var(--label);
+    text-wrap:      balance;
+  }
+
+  .out-desc {
+    margin-top: 8px;
+    font-size:  14px;
+    color:      var(--label-2);
+    line-height: 1.55;
+  }
+
+  /* ── Section cards ── */
+  .forge-card {
+    background:    rgba(18,18,22,0.72);
+    -webkit-backdrop-filter: blur(24px) saturate(1.8);
+            backdrop-filter: blur(24px) saturate(1.8);
+    border:        1px solid var(--glass-border-2);
+    border-radius: var(--r-xl);
+    overflow:      hidden;
+    box-shadow:    0 2px 20px rgba(0,0,0,0.30),
+                   inset 0 1px 0 rgba(255,255,255,0.06);
+    opacity:       0;
+    transform:     translateY(16px);
+    transition:    opacity var(--dur-base) var(--ease-out),
+                   transform var(--dur-base) var(--ease-out);
+  }
+
+  .forge-card.appear { opacity:1; transform:translateY(0); }
+
+  .card-header {
+    display:     flex;
+    align-items: center;
+    gap:         10px;
+    padding:     16px 18px 12px;
+    border-bottom: 1px solid var(--glass-border-2);
+  }
+
+  .card-icon {
+    width:         36px; height: 36px;
+    border-radius: var(--r-sm);
+    display:       flex;
+    align-items:   center;
+    justify-content: center;
+    font-size:     18px;
+    flex-shrink:   0;
+  }
+
+  .card-label {
+    font-size:      11px;
+    font-weight:    700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color:          var(--label-3);
+  }
+
+  .card-body {
+    padding: 16px 18px 18px;
+  }
+
+  /* ── Text content ── */
+  .forge-text {
+    font-size:   15px;
+    line-height: 1.65;
+    color:       var(--label-2);
+  }
+
+  .forge-text strong {
+    color:       var(--label);
+    font-weight: 600;
+  }
+
+  .forge-text em {
+    color:       var(--accent);
+    font-style:  normal;
+    font-weight: 500;
+  }
+
+  /* ── Key-value insight rows ── */
+  .insight-row {
+    display:       flex;
+    flex-direction: column;
+    gap:           3px;
+    padding:       12px 0;
+    border-bottom: 1px solid var(--sep);
+  }
+  .insight-row:last-child { border-bottom:none; padding-bottom:0; }
+
+  .insight-key {
+    font-size:      11px;
+    font-weight:    700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color:          var(--label-3);
+  }
+
+  .insight-val {
+    font-size:   15px;
+    color:       var(--label);
+    line-height: 1.5;
+  }
+
+  .insight-val em { color: var(--accent-2); font-style:normal; }
+
+  /* ── Signal bars ── */
+  .signal-item {
+    display:     flex;
+    align-items: flex-start;
+    gap:         12px;
+    padding:     12px 0;
+    border-bottom: 1px solid var(--sep);
+  }
+  .signal-item:last-child { border-bottom:none; padding-bottom:0; }
+
+  .signal-pill {
+    padding:       3px 10px;
+    border-radius: var(--r-capsule);
+    font-size:     11px;
+    font-weight:   700;
+    letter-spacing: 0.04em;
+    white-space:   nowrap;
+    flex-shrink:   0;
+    margin-top:    2px;
+  }
+  .signal-pill.high   { background:rgba(255,69,58,0.20); color:#FF453A; border:1px solid rgba(255,69,58,0.30); }
+  .signal-pill.med    { background:rgba(255,159,10,0.20); color:#FF9F0A; border:1px solid rgba(255,159,10,0.30); }
+  .signal-pill.low    { background:rgba(48,209,88,0.16); color:#30D158;  border:1px solid rgba(48,209,88,0.28); }
+  .signal-pill.info   { background:rgba(41,151,255,0.18); color:#2997FF; border:1px solid rgba(41,151,255,0.30); }
+
+  .signal-text { font-size:14px; color:var(--label-2); line-height:1.5; }
+
+  /* ── Metric tiles ── */
+  .metric-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .metric-tile {
+    background:    var(--glass-bg-2);
+    border:        1px solid var(--glass-border-2);
+    border-radius: var(--r-lg);
+    padding:       14px;
+    display:       flex;
+    flex-direction: column;
+    gap:           4px;
+  }
+
+  .metric-val {
+    font-family:    var(--font-display);
+    font-size:      28px;
+    font-style:     italic;
+    line-height:    1;
+    letter-spacing: -0.02em;
+  }
+
+  .metric-key {
+    font-size:      11px;
+    font-weight:    600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color:          var(--label-3);
+  }
+
+  .metric-delta {
+    font-size:   12px;
+    color:       var(--accent-2);
+    font-weight: 500;
+  }
+
+  /* ── Quote card ── */
+  .forge-quote {
+    position:    relative;
+    padding:     16px 18px 16px 22px;
+    border-left: 2px solid var(--accent);
+    background:  rgba(41,151,255,0.07);
+    border-radius: 0 var(--r-md) var(--r-md) 0;
+    font-family: var(--font-display);
+    font-style:  italic;
+    font-size:   17px;
+    line-height: 1.55;
+    color:       var(--label);
+  }
+
+  /* ── Action items ── */
+  .action-item {
+    display:     flex;
+    align-items: flex-start;
+    gap:         12px;
+    padding:     12px 0;
+    border-bottom: 1px solid var(--sep);
+  }
+  .action-item:last-child { border-bottom:none; padding-bottom:0; }
+
+  .action-num {
+    width:         26px; height: 26px;
+    border-radius: var(--r-sm);
+    background:    rgba(41,151,255,0.18);
+    border:        1px solid rgba(41,151,255,0.30);
+    display:       flex; align-items:center; justify-content:center;
+    font-size:     13px; font-weight:700;
+    color:         var(--accent);
+    flex-shrink:   0;
+    margin-top:    1px;
+  }
+
+  .action-text { font-size:14px; color:var(--label-2); line-height:1.55; }
+  .action-text strong { color:var(--label); }
+
+  /* ── Horizon bar ── */
+  .horizon-bar {
+    display:       flex;
+    align-items:   stretch;
+    border-radius: var(--r-md);
+    overflow:      hidden;
+    height:        56px;
+    border:        1px solid var(--glass-border-2);
+  }
+
+  .horizon-seg {
+    flex: 1;
+    display:       flex;
+    flex-direction: column;
+    align-items:   center;
+    justify-content: center;
+    gap:           2px;
+    font-size:     10px;
+    font-weight:   600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color:         rgba(255,255,255,0.7);
+  }
+
+  .horizon-seg .h-val { font-size:18px; font-weight:700; line-height:1; }
+
+  /* ── Streaming cursor ── */
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  .stream-cursor {
+    display:       inline-block;
+    width:         2px; height: 16px;
+    background:    var(--accent);
+    vertical-align: middle;
+    margin-left:   3px;
+    border-radius: 1px;
+    animation:     blink 0.9s ease-in-out infinite;
+  }
+
+  /* ── Scroll top FAB ── */
+  #fab-top {
+    position:  fixed;
+    bottom:    calc(var(--safe-bot) + 20px);
+    right:     20px;
+    width:     44px; height: 44px;
+    border-radius: 50%;
+    background:    rgba(28,28,30,0.85);
+    -webkit-backdrop-filter: blur(20px) saturate(2);
+            backdrop-filter: blur(20px) saturate(2);
+    border:    1px solid var(--glass-border);
+    display:   flex; align-items:center; justify-content:center;
+    cursor:    pointer;
+    z-index:   300;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.40),
+                inset 0 1px 0 rgba(255,255,255,0.10);
+    opacity:   0;
+    transform: translateY(12px) scale(0.88);
+    transition: opacity var(--dur-base) var(--ease-out),
+                transform var(--dur-base) var(--ease-spring);
+    pointer-events: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #fab-top.show { opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+  #fab-top:active { transform:scale(0.92); }
+  #fab-top svg { color:var(--label-2); }
+
+  /* ── Error state ── */
+  .error-card {
+    padding:       20px;
+    background:    rgba(255,69,58,0.12);
+    border:        1px solid rgba(255,69,58,0.28);
+    border-radius: var(--r-xl);
+    font-size:     14px;
+    color:         #FF453A;
+    line-height:   1.55;
+  }
+
+  /* ── card colour accents ── */
+  .accent-blue   { background:rgba(41,151,255,0.18);  }
+  .accent-green  { background:rgba(48,209,88,0.16);   }
+  .accent-orange { background:rgba(255,159,10,0.18);  }
+  .accent-purple { background:rgba(191,90,242,0.18);  }
+  .accent-red    { background:rgba(255,69,58,0.18);   }
+  .accent-teal   { background:rgba(90,200,250,0.18);  }
+
+  /* ── Safe-area nudge for very tall pages ── */
+  .safe-spacer { height: calc(var(--safe-bot) + 20px); }
+
+</style>
+</head>
+
+<body>
+
+<!-- ═══ STICKY HEADER ═══ -->
+<header id="app-header">
+  <div class="forge-wordmark">
+    <span class="f-letter">F</span><span class="f-rest">ORGE</span>
+  </div>
+  <div class="forge-sub">Future Oriented Reflective Generative Engine</div>
+
+  <div id="query-row">
+    <input id="forge-input"
+           type="text"
+           placeholder="Enter a topic, question, or domain…"
+           autocomplete="off"
+           autocorrect="off"
+           spellcheck="false"
+           value="The Future of Spatial Computing &amp; Ambient Intelligence"/>
+    <button id="run-btn" onclick="runForge()">
+      <span class="btn-icon" id="btn-icon-wrap">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 2L12.5 8H18.5L13.5 11.8L15.5 18L10 14L4.5 18L6.5 11.8L1.5 8H7.5L10 2Z"
+                fill="currentColor"/>
+        </svg>
+      </span>
+      <span id="btn-label">RUN FORGE</span>
+    </button>
+  </div>
+</header>
+
+<!-- ═══ SCROLL AREA ═══ -->
+<main id="scroll-area">
+
+  <!-- IDLE STATE -->
+  <div id="idle-state">
+    <div class="idle-orb"></div>
+    <div class="idle-headline">Intelligence,<br/>forged on demand.</div>
+    <div class="idle-sub">Enter any topic above and tap RUN FORGE to generate a full strategic intelligence briefing.</div>
+    <div class="idle-chips">
+      <div class="idle-chip" onclick="setTopic('AI safety &amp; alignment')">AI Safety</div>
+      <div class="idle-chip" onclick="setTopic('Quantum computing breakthroughs')">Quantum</div>
+      <div class="idle-chip" onclick="setTopic('Climate technology &amp; carbon markets')">Climate Tech</div>
+      <div class="idle-chip" onclick="setTopic('The creator economy in 2025')">Creator Economy</div>
+      <div class="idle-chip" onclick="setTopic('Biotech &amp; longevity science')">Longevity</div>
+      <div class="idle-chip" onclick="setTopic('Geopolitics of semiconductors')">Semiconductors</div>
+    </div>
+  </div>
+
+  <!-- OUTPUT AREA (populated by JS) -->
+  <div id="output-area"></div>
+
+</main>
+
+<!-- FAB scroll-to-top -->
+<div id="fab-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <path d="M9 14V5M4 9l5-5 5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   FORGE — Agent Runtime
+═══════════════════════════════════════════ */
+
+const FORGE_SYSTEM = `You are FORGE — the Future Oriented Reflective Generative Engine.
+Your purpose is to produce rigorous, visionary strategic intelligence briefings for any topic.
+You are concise yet dense with insight. You write with precision and intellectual confidence.
+You must respond ONLY with a valid JSON object — no markdown fences, no explanations, no preamble.
+
+Output this exact JSON structure:
+
+{
+  "title": "A compelling, evocative headline for this briefing",
+  "subtitle": "A sharp one-sentence executive summary",
+  "overview": "2-3 paragraphs of deep contextual analysis. Use **bold** for critical terms and *italic* for signals/concepts.",
+  "metrics": [
+    {"val":"$4.2T","key":"Market Size","delta":"↑ 28% YoY","color":"blue"},
+    {"val":"73%","key":"Adoption Rate","delta":"↑ 12pts","color":"green"},
+    {"val":"2031","key":"Inflection Year","delta":"± 2 years","color":"purple"},
+    {"val":"18mo","key":"Avg. Lead Time","delta":"Compressed","color":"orange"}
+  ],
+  "insights": [
+    {"key":"Primary Driver","val":"One sentence describing the core force shaping this domain."},
+    {"key":"Hidden Tension","val":"One sentence exposing a non-obvious paradox or conflict."},
+    {"key":"Structural Shift","val":"One sentence about a fundamental change in the landscape."},
+    {"key":"Wildcard","val":"One sentence describing the most surprising possible development."}
+  ],
+  "signals": [
+    {"level":"high","text":"A specific emerging signal with HIGH urgency or risk."},
+    {"level":"high","text":"Another high signal."},
+    {"level":"med","text":"A medium-priority signal worth monitoring."},
+    {"level":"med","text":"Another medium signal."},
+    {"level":"low","text":"A low-risk positive signal or stabilising factor."},
+    {"level":"info","text":"A contextual data point or reference signal."}
+  ],
+  "quote": "A single incisive, memorable sentence that captures the deepest truth about this topic. No attribution needed.",
+  "horizon": [
+    {"label":"0–6 mo","val":"Now","desc":"Immediate action window"},
+    {"label":"6–18 mo","val":"Near","desc":"Strategic positioning"},
+    {"label":"2–5 yr","val":"Mid","desc":"Structural opportunity"},
+    {"label":"5–10 yr","val":"Far","desc":"Paradigm horizon"}
+  ],
+  "actions": [
+    {"title":"Primary Imperative","body":"The single most important strategic action to take immediately. Be specific and direct."},
+    {"title":"Intelligence Priority","body":"What to monitor, study, or learn next. Name specific sources or signals."},
+    {"title":"Risk Mitigation","body":"The most critical risk to hedge against and how to do it."},
+    {"title":"Positioning Move","body":"How to position for the 3-5 year opportunity window."},
+    {"title":"Contrarian Bet","body":"The non-consensus position that could generate outsized returns if correct."}
+  ]
+}
+
+Make all content specific to the exact topic given. Use real numbers, real signals, and real strategic thinking.
+Every field must be substantive, not generic. Write as if briefing a senior decision-maker with 90 seconds to read.`;
+
+const FORGE_USER = (topic) =>
+  `Generate a complete FORGE strategic intelligence briefing on this topic: "${topic}"`;
+
+let isRunning = false;
+
+function setTopic(t) {
+  document.getElementById('forge-input').value = t;
+}
+
+async function runForge() {
+  if (isRunning) return;
+  const topic = document.getElementById('forge-input').value.trim();
+  if (!topic) { document.getElementById('forge-input').focus(); return; }
+
+  isRunning = true;
+  const btn     = document.getElementById('run-btn');
+  const iconW   = document.getElementById('btn-icon-wrap');
+  const label   = document.getElementById('btn-label');
+  const idle    = document.getElementById('idle-state');
+  const out     = document.getElementById('output-area');
+
+  // UI → running state
+  btn.classList.add('running');
+  btn.classList.remove('done');
+  iconW.innerHTML = '<div class="spinner"></div>';
+  label.textContent = 'Forging…';
+  idle.classList.add('hidden');
+  out.classList.remove('visible');
+  out.innerHTML = '';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model:      'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system:     FORGE_SYSTEM,
+        messages:   [{ role:'user', content: FORGE_USER(topic) }]
+      })
+    });
+
+    if (!res.ok) throw new Error(`API ${res.status}`);
+    const data = await res.json();
+    const raw  = data.content.map(b => b.text || '').join('');
+
+    // strip any accidental fences
+    const clean = raw.replace(/```[a-z]*/gi,'').replace(/```/g,'').trim();
+    const brief = JSON.parse(clean);
+
+    renderBriefing(brief, topic);
+
+    btn.classList.remove('running');
+    btn.classList.add('done');
+    iconW.innerHTML = `<svg viewBox="0 0 20 20" fill="none">
+      <path d="M4 10.5l5 5 8-9" stroke="#30D158" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+    label.textContent = 'Complete';
+
+  } catch(err) {
+    out.innerHTML = `<div class="error-card">⚡ FORGE encountered an error: ${err.message}<br><br>Ensure the Anthropic API is available in this context.</div>`;
+    out.classList.add('visible');
+    btn.classList.remove('running');
+    iconW.innerHTML = `<svg viewBox="0 0 20 20" fill="none">
+      <path d="M10 2L12.5 8H18.5L13.5 11.8L15.5 18L10 14L4.5 18L6.5 11.8L1.5 8H7.5L10 2Z" fill="currentColor"/>
+    </svg>`;
+    label.textContent = 'RUN FORGE';
+  }
+
+  isRunning = false;
+}
+
+/* ── Render briefing to DOM ── */
+function renderBriefing(b, topic) {
+  const out = document.getElementById('output-area');
+  out.innerHTML = '';
+
+  const ts = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+
+  const cards = [];
+
+  /* 1 — Header card */
+  cards.push(`
+    <div class="out-header-card">
+      <div class="out-meta">
+        <div class="out-badge">FORGE BRIEFING</div>
+        <div class="out-ts">${ts}</div>
+      </div>
+      <div class="out-title">${esc(b.title)}</div>
+      <div class="out-desc">${esc(b.subtitle)}</div>
+    </div>`);
+
+  /* 2 — Metrics grid */
+  const colorMap = {blue:'#2997FF',green:'#30D158',orange:'#FF9F0A',purple:'#BF5AF2',red:'#FF453A',teal:'#5AC8FA'};
+  cards.push(`
+    <div class="forge-card">
+      <div class="card-header">
+        <div class="card-icon accent-blue">📊</div>
+        <div class="card-label">Key Metrics</div>
+      </div>
+      <div class="card-body">
+        <div class="metric-grid">
+          ${b.metrics.map(m=>`
+          <div class="metric-tile">
+            <div class="metric-val" style="color:${colorMap[m.color]||'#fff'}">${esc(m.val)}</div>
+            <div class="metric-key">${esc(m.key)}</div>
+            <div class="metric-delta">${esc(m.delta)}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>`);
+
+  /* 3 — Overview */
+  cards.push(`
+    <div class="forge-card">
+      <div class="card-header">
+        <div class="card-icon accent-purple">🔭</div>
+        <div class="card-label">Strategic Overview</div>
+      </div>
+      <div class="card-body">
+        <div class="forge-text">${renderInline(b.overview)}</div>
+      </div>
+    </div>`);
+
+  /* 4 — Core Insights */
+  cards.push(`
+    <div class="forge-card">
+      <div class="card-header">
+        <div class="card-icon accent-orange">⚡</div>
+        <div class="card-label">Core Insights</div>
+      </div>
+      <div class="card-body">
+        ${b.insights.map(i=>`
+        <div class="insight-row">
+          <div class="insight-key">${esc(i.key)}</div>
+          <div class="insight-val">${renderInline(i.val)}</div>
+        </div>`).join('')}
+      </div>
+    </div>`);
+
+  /* 5 — Signal Watch */
+  cards.push(`
+    <div class="forge-card">
+      <div class="card-header">
+        <div class="card-icon accent-red">🚨</div>
+        <div class="card-label">Signal Watch</div>
+      </div>
+      <div class="card-body">
+        ${b.signals.map(s=>`
+        <div class="signal-item">
+          <div class="signal-pill ${s.level}">${s.level.toUpperCase()}</div>
+          <div class="signal-text">${esc(s.text)}</div>
+        </div>`).join('')}
+      </div>
+    </div>`);
+
+  /* 6 — The FORGE Quote */
+  cards.push(`
+    <div class="forge-card">
+      <div class="card-header">
+        <div class="card-icon accent-teal">💎</div>
+        <div class="card-label">The Synthesis</div>
+      </div>
+      <div class="card-body">
+        <div class="forge-quote">"${esc(b.quote)}"</div>
+      </div>
+    </div>`);
+
+  /* 7 — Time Horizon */
+  const hColors = ['rgba(41,151,255,0.30)','rgba(191,90,242,0.25)','rgba(255,159,10,0.22)','rgba(48,209,88,0.20)'];
+  cards.push(`
+    <div class="forge-card">
+      <div class="card-header">
+        <div class="card-icon accent-green">⏱</div>
+        <div class="card-label">Time Horizon</div>
+      </div>
+      <div class="card-body">
+        <div class="horizon-bar">
+          ${b.horizon.map((h,i)=>`
+          <div class="horizon-seg" style="background:${hColors[i]}">
+            <div class="h-val">${esc(h.val)}</div>
+            <div>${esc(h.label)}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>`);
+
+  /* 8 — Strategic Actions */
+  cards.push(`
+    <div class="forge-card">
+      <div class="card-header">
+        <div class="card-icon accent-blue">🎯</div>
+        <div class="card-label">Strategic Imperatives</div>
+      </div>
+      <div class="card-body">
+        ${b.actions.map((a,i)=>`
+        <div class="action-item">
+          <div class="action-num">${i+1}</div>
+          <div class="action-text"><strong>${esc(a.title)}</strong><br/>${esc(a.body)}</div>
+        </div>`).join('')}
+      </div>
+    </div>`);
+
+  /* inject all cards */
+  out.innerHTML = cards.join('');
+  out.classList.add('visible');
+
+  /* staggered card entrance */
+  const cardEls = out.querySelectorAll('.forge-card');
+  cardEls.forEach((c, i) => {
+    setTimeout(() => c.classList.add('appear'), 120 + i * 80);
+  });
+
+  /* scroll past header */
+  setTimeout(() => {
+    const h = document.getElementById('app-header');
+    window.scrollTo({ top: h.offsetHeight + 8, behavior:'smooth' });
+  }, 180);
+}
+
+/* ── Helpers ── */
+function esc(s='') {
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function renderInline(s='') {
+  return esc(s)
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/\n\n/g,'</p><p style="margin-top:.75em">')
+    .replace(/\n/g,'<br/>');
+}
+
+/* ── Scroll progress + FAB ── */
+window.addEventListener('scroll', () => {
+  const el  = document.documentElement;
+  const bot = el.scrollHeight - el.clientHeight;
+  const pct = bot > 0 ? Math.min(window.scrollY / bot, 1) : 0;
+  el.style.setProperty('--progress', pct);
+
+  const fab = document.getElementById('fab-top');
+  if (window.scrollY > 300) fab.classList.add('show');
+  else                       fab.classList.remove('show');
+}, { passive:true });
+
+/* ── Return key in input ── */
+document.getElementById('forge-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') runForge();
+});
+
+/* ── Chip click → input ── */
+function setTopic(t) {
+  document.getElementById('forge-input').value = t;
+}
+</script>
+</body>
+</html>
